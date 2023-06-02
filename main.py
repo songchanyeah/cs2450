@@ -36,3 +36,6 @@ if __name__ == "__main__":
 # else they are data so they can be minus
 #
 # when each index of the list is executed, put it in a variable called accumulator
+
+
+#first pr
