@@ -13,11 +13,10 @@ class UVSim:
     def execute(self):
         pass
 
-#jfbvhjbdfivbiwenc
+
 
 def main():
-    #first commit
-    pass
+    return 1
 
 
 if __name__ == "__main__":
@@ -37,5 +36,3 @@ if __name__ == "__main__":
 #
 # when each index of the list is executed, put it in a variable called accumulator
 
-
-#first pr
