@@ -22,29 +22,29 @@ class UVSim:
 
     def execute(self):
         '''Execute Instructions'''
-        if self.operation_code = 10: # READ
+        if self.operation_code == 10: # READ
             pass
-        elif self.operation_code = 11: # WRITE
+        elif self.operation_code == 11: # WRITE
             pass
-        elif self.operation_code = 20: # LOAD
+        elif self.operation_code == 20: # LOAD
             pass
-        elif self.operation_code = 21: # STORE
+        elif self.operation_code == 21: # STORE
             pass
-        elif self.operation_code = 30: # ADD
+        elif self.operation_code == 30: # ADD
             pass
-        elif self.operation_code = 31: # SUBTRACT
+        elif self.operation_code == 31: # SUBTRACT
             pass
-        elif self.operation_code = 32: # DIVIDE
+        elif self.operation_code == 32: # DIVIDE
             pass
-        elif self.operation_code = 33: # MULTIPLY
+        elif self.operation_code == 33: # MULTIPLY
             pass
-        elif self.operation_code = 40: # BRANCH
+        elif self.operation_code == 40: # BRANCH
             pass
-        elif self.operation_code = 41: # BRANCHNEG
+        elif self.operation_code == 41: # BRANCHNEG
             pass
-        elif self.operation_code = 42: # BRANCHZERO
+        elif self.operation_code == 42: # BRANCHZERO
             pass
-        elif self.operation_code = 43: # HALT
+        elif self.operation_code == 43: # HALT
             pass
         
 
