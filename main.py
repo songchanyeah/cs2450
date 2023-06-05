@@ -67,5 +67,3 @@ if __name__ == "__main__":
 #
 # when each index of the list is executed, put it in a variable called accumulator
 
-
-#first pr
