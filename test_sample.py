@@ -16,6 +16,18 @@ def test_answer():
 def f():
     raise SystemExit(1)
 
+def test_fetch():
+    sim = UVSim()
+    sim.memory[0] = 1002 # opcode 10 and operand 01
+    sim.memory[1] = 2130 # opcode 21 and operand 30
+    sim.memory[2] = 4300 # opcode 43 and operand 00
+    sim.memory[3] = 0000 # opcode 00 and operand 00
+    sim.memory[4] = 0000 # opcode 00 and operand 00
+    sim.memory[5] = 0000 # opcode 00 and operand 00
+    
+    sim.fetch()
+    assert sim.operation_code == 10
+    assert sim.operand == 2
 
 def test_mytest():
     with pytest.raises(SystemExit):
