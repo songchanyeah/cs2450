@@ -8,19 +8,25 @@ class UVSim:
         self.operand = 0
 
     def load(self, filename):
-        #comment
-        pass
+        '''Load Instructions Into Memory'''
+        with open(filename, 'r') as file:
+            for i, line in enumerate(file):
+                self.memory[i] = int(line)
+
+    def fetch(self):
+        '''Fetch Instructions From Memory'''
+        self.instruction_register = self.memory[self.instruction_counter] # Fetch the instructions at instruction counter memory location
+        self.operation_code = self.instruction_register // 100 # Discard last two digits so we just have the first two (opcode)
+        self.operand = self.instruction_register % 100 # Discard first two digits so we just have the last two (operand)
+        
 
     def execute(self):
+        '''Execute Instructions'''
         pass
 
-#jfbvhjbdfivbiwenc
 
 def main():
-    #first commit
     pass
-
-
 if __name__ == "__main__":
     main()
 
