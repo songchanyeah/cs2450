@@ -1,20 +1,19 @@
 class UVSim:
     def __init__(self):
-        self.operation_codes = [10, 11, 20, 21, 30, 31, 32, 33, 40, 41, 42, 43]
-        self.operation_code = 0
-        self.register = [0] * 100
-        self.register_index = 0
+        self.memory = [0] * 100
         self.accumulator = 0
         self.instruction_counter = 0
         self.instruction_register = 0
+        self.operation_code = 0
         self.operand = 0
-        self.halt = False
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
         with open(filename, 'r') as file:
             for i, line in enumerate(file):
-                self.memory[i] = int(line)
+                sign = -1 if line[0] == '-' else 1 # Check if the number is negative
+                self.memory[i] = int(line[1:]) * sign # Convert the number to an integer and store it in memory
+        print(self.memory)
 
     def fetch(self):
         '''Fetch Instructions From Memory'''
@@ -28,80 +27,57 @@ class UVSim:
         '''Execute Instructions'''
         match self.operation_code:
             case 10:  # READ
-                # type something in the console, input()
-                # then update that info in the register address following the operation_code
-                # for example 1007 -> read from console then put that info in register[07]
-                readVal = 0
-                readVal = input("Type the value to be READ in console: ")
-                self.register[self.register_index] = int(readVal)  # parse
+                '''Gets user input and stores it in memory specified by the operand value'''
+                self.memroy[self.operand] = int(input(("Type the value to be READ in console: ")))
             case 11:  # WRITE
-                print(self.register[self.register_index])
+                # Write a word from a specific location in memory to screen
+                print(self.memory[self.operand])
             case 20:  # LOAD
+                '''Load a word from a specific location in memory into the accumulator'''
                 self.accumulator = self.register[self.register_index]
             case 21:  # STORE
+                '''Store a word from the accumulator into a specific location in memory'''
                 self.register[self.register_index] = self.accumulator
             case 30:  # ADD
+                '''Add a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
                 self.accumulator = self.accumulator + \
                     self.register[self.register_index]
             case 31:  # SUBTRACT
+                '''Subtract a word from a specific location in memory from the word in the accumulator (leave the result in the accumulator)'''
                 self.accumulator = self.accumulator - \
                     self.register[self.register_index]
             case 32:  # DIVIDE
+                '''Divide the word in the accumulator by a word from a specific location in memory (leave the result in the accumulator)'''
                 self.accumulator = self.accumulator / \
                     self.register[self.register_index]
             case 33:  # MULTIPLY
+                '''Multiply a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
                 self.accumulator = self.accumulator * \
                     self.register[self.register_index]
             case 40:  # BRANCH
-                
+                '''Branch to a specific location in memory'''
                 each_register = self.register[self.register_index]
             case 41:  # BRANCHNEG
+                '''Branch to a specific location in memory if the accumulator is negative'''
                 if self.accumulator < 0:
                     each_register = self.register[self.register_index]
             case 42:  # BRANCHZERO
+                '''Branch to a specific location in memory if the accumulator is zero'''
                 if self.accumulator == 0:
                     each_register = self.register[self.register_index]
             case 43:  # HALT
+                '''Pause the program'''
                 self.halt = True
 
 
-    def parse(self, testFile):
-        self.halt = False
-        # 100 registers
-        self.register = [each_register for each_register in testFile]
-        # each register of registers which has the word (4 digit integer)
-        for each_register in self.register:
-            if self.halt == True:
-                break
-            else:
-                # it could be plus or number, either way it is a plus
-                if each_register[0] != "-":
-                    # the 0th index is not a number, the 1st index is a number
-                    if each_register[0] == "+":
-                        if int(each_register[1:3]) in self.operation_codes:
-                            self.operation_code = int(each_register[1:3])
-                            # self.register[register_index]
-                            self.register_index = int(each_register[3:5])
-                            self.execute()
-                    else:  # the 0th index is a number
-                        if each_register[0:2] in self.operation_codes:
-                            self.operation_code = each_register[0:2]
-                            # self.register[register_index]
-                            self.register_index = each_register[2:4]
-                            # how to pass by reference in python
-                            self.execute(each_register)
-                else:  # when the first character is a minus
-                    # just a data, what do you do
-                    pass
-
 
 def main():
-    testFile = open("test1.txt", "r")
+    testFile = "Test1.txt"
     uvsim = UVSim()
-    uvsim.parse(testFile)
-    uvsim.execute()
+    uvsim.load(testFile)
+    #uvsim.execute()
 
-    return 1
+    #return 1
 
 
 if __name__ == "__main__":
