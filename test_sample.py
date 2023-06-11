@@ -31,6 +31,22 @@ def test_fetch():
     assert sim.operation_code == 10
     assert sim.operand == 2
 
+###DENIS
+def test_load():
+    ohno = UVSim()
+    ohno.load('badtest1.txt')
+    expected_memory = [ +1010, +20+07, +20+09, -1110, +1o0O, 3100+, -+1100, -----, +9999, -4300, -0000, +4300, -0000, +0000, +0000 ,-99999]
+    assert ohno.memory[:len(expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {ohno.memory[:len(expected_memory)]}'
+
+def test_fetch():
+    ohno = UVSim()
+    ohno.load('Test1.txt')
+    ohno.fetch()
+    assert ohno.instruction_register == +1007, f'Expected instruction register to be +1007, but got {ohno.instruction_register}'
+    assert ohno.operation_code == 10, f'Expected operation code 10, but got {ohno.operation_code}'
+    assert ohno.operand == 7, f'Expected operand 07, but got {ohno.operand}'
+#test made to fail to check for cheaters and other things
+###DENIS
 
 def test_mytest():
     with pytest.raises(SystemExit):
