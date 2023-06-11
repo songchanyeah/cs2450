@@ -6,13 +6,17 @@ class UVSim:
         self.instruction_register = 0
         self.operation_code = 0
         self.operand = 0
+        self.register = 0 #This will need to be fixed, there was no class object being referenced here.
+        self.register_index = 0 #This will need to be fixed, there was no class object being referenced here.
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
         with open(filename, 'r') as file:
             for i, line in enumerate(file):
-                sign = -1 if line[0] == '-' else 1 # Check if the number is negative
-                self.memory[i] = int(line[1:]) * sign # Convert the number to an integer and store it in memory
+                # Check if the number is negative
+                sign = -1 if line[0] == '-' else 1
+                # Convert the number to an integer and store it in memory
+                self.memory[i] = int(line[1:]) * sign
         print(self.memory)
 
     def fetch(self):
@@ -23,12 +27,13 @@ class UVSim:
         # Discard first two digits so we just have the last two (operand)
         self.operand = self.instruction_register % 100
 
-    def execute(self, each_register):
+    def execute(self):
         '''Execute Instructions'''
         match self.operation_code:
             case 10:  # READ
                 '''Gets user input and stores it in memory specified by the operand value'''
-                self.memroy[self.operand] = int(input(("Type the value to be READ in console: ")))
+                self.memory[self.operand] = int(
+                    input(("Type the value to be READ in console: ")))
             case 11:  # WRITE
                 # Write a word from a specific location in memory to screen
                 print(self.memory[self.operand])
@@ -56,29 +61,25 @@ class UVSim:
                     self.register[self.register_index]
             case 40:  # BRANCH
                 '''Branch to a specific location in memory'''
-                each_register = self.register[self.register_index]
+                self.instruction_counter = self.operand
             case 41:  # BRANCHNEG
                 '''Branch to a specific location in memory if the accumulator is negative'''
                 if self.accumulator < 0:
-                    each_register = self.register[self.register_index]
+                    self.instruction_counter = self.operand
             case 42:  # BRANCHZERO
                 '''Branch to a specific location in memory if the accumulator is zero'''
                 if self.accumulator == 0:
-                    each_register = self.register[self.register_index]
+                    self.instruction_counter = self.operand
             case 43:  # HALT
-                '''Pause the program'''
-                self.halt = True
-
-
+                '''Halt the program'''
+                print("Program halted.")
+                return "Program halted."
 
 def main():
     testFile = "Test1.txt"
     uvsim = UVSim()
     uvsim.load(testFile)
-    #uvsim.execute()
-
-    #return 1
-
+    # uvsim.execute()
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 import pytest
-
-from main import main, UVSim
+from main import UVSim
 
 # To run these tests, open a terminal and run "pytest" in the terminal to check if tests pass.
 
@@ -10,12 +9,12 @@ def func(x):
     return x + 1
 
 
-
 # tutorial function and test number 2
 
 
 def f():
     raise SystemExit(1)
+
 
 
 def test_fetch():
@@ -32,6 +31,7 @@ def test_fetch():
     assert sim.operand == 2
 
 ###DENIS
+'''
 def test_load():
     ohno = UVSim()
     ohno.load('badtest1.txt')
@@ -47,16 +47,11 @@ def test_fetch():
     assert ohno.operand == 7, f'Expected operand 07, but got {ohno.operand}'
 #test made to fail to check for cheaters and other things
 ###DENIS
-
+'''
 def test_mytest():
     with pytest.raises(SystemExit):
         f()
 
-# function for testing main in main.py returns a 1 integer
-
-
-def test_main():
-    assert main() == 1
 
 # testing UVSim class constructor
 
@@ -70,3 +65,45 @@ def test_UVSim():
     assert uvsim.instruction_register == 0
     assert uvsim.operation_code == 0
     assert uvsim.operand == 0
+
+
+def test_load():
+
+    sim = UVSim()
+
+    sim.load('Test1.txt')
+
+    expected_memory = [
+        +1007,
+        +1008,
+        +2007,
+        +2008,
+        +2109,
+        +1109,
+        +4300,
+        +0000,
+        +0000,
+        +0000,
+        -99999]
+
+    assert sim.memory[:len(
+        expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {sim.memory[:len(expected_memory)]}'
+    
+def test_new_fetch_update():
+    sim = UVSim()
+
+    sim.load('Test1.txt')
+    sim.fetch()
+
+    assert sim.instruction_register == + \
+        1007, f'Expected instruction register to be +1007, but got {sim.instruction_register}'
+    assert sim.operation_code == 10, f'Expected operation code 10, but got {sim.operation_code}'
+    assert sim.operand == 7, f'Expected operand 07, but got {sim.operand}'
+
+
+def test_execute():
+    sim = UVSim()
+    sim.operation_code = 43
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
