@@ -1,11 +1,11 @@
 import pytest
-from UVSim_Class import UVSim
+from Classes.UVSim_Class import UVSim
 # To run these tests, open a terminal and run "pytest" in the terminal to check if tests pass.
 
 #test that checks the fetch function 
 def test_fetch():
     sim = UVSim()
-    sim.memory[0] = 1002  # opcode 10 and operand 01
+    sim.memory[0] = 1002  # opcode 10 and operand 02
     sim.memory[1] = 2130  # opcode 21 and operand 30
     sim.memory[2] = 4300  # opcode 43 and operand 00
     sim.memory[3] = 0000  # opcode 00 and operand 00
@@ -47,8 +47,96 @@ def test_new_fetch_update():
     assert sim.operation_code == 10, f'Expected operation code 10, but got {sim.operation_code}'
     assert sim.operand == 7, f'Expected operand 07, but got {sim.operand}'
 
+#Tests the execute function with the op_code 10 READ
+def test_execute_op_code_10():
+    sim = UVSim()
+    sim.operation_code = 10
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
 
-def test_execute():
+#Tests the execute function with the op_code 11 WRITE
+def test_execute_op_code_11():
+    sim = UVSim()
+    sim.operation_code = 11
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 20 LOAD
+def test_execute_op_code_20():
+    sim = UVSim()
+    sim.operation_code = 20
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 21 STORE
+def test_execute_op_code_21():
+    sim = UVSim()
+    sim.operation_code = 21
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 30 ADD
+def test_execute_op_code_30():
+    sim = UVSim()
+    sim.operation_code = 30
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 31 SUBTRACT
+def test_execute_op_code_31():
+    sim = UVSim()
+    sim.operation_code = 31
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 32 DIVIDE
+def test_execute_op_code_32():
+    sim = UVSim()
+    sim.operation_code = 32
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 33 MULTIPLY
+def test_execute_op_code_33():
+    sim = UVSim()
+    sim.operation_code = 33
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 40 BRANCH
+def test_execute_op_code_40():
+    sim = UVSim()
+    sim.operation_code = 40
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 41 BRANCHNEG
+def test_execute_op_code_41():
+    sim = UVSim()
+    sim.operation_code = 41
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 42 BRANCHZERO
+def test_execute_op_code_42():
+    sim = UVSim()
+    sim.operation_code = 42
+    
+    assert sim.execute() == "Program halted."
+    assert sim.execute() != "Bluey halted."
+
+#Tests the execute function with the op_code 43 Halt
+def test_execute_op_code_43():
     sim = UVSim()
     sim.operation_code = 43
     

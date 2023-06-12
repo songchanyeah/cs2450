@@ -1,4 +1,4 @@
-from UVSim_Class import UVSim
+from Classes.UVSim_Class import UVSim
 
 #this file is to run the main python program.
 
