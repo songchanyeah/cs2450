@@ -84,7 +84,5 @@ class UVSim:
                 '''Halt the program'''
                 print("Program halted.")
                 return "Program halted."
-            case default:
-                print("something is broken")
             
             
