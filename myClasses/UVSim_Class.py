@@ -1,4 +1,7 @@
+import os
+
 class UVSim:
+
     def __init__(self):
         self.memory = [0] * 100
         self.accumulator = 0
@@ -11,6 +14,10 @@ class UVSim:
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
+        if not os.path.exists(filename):
+            print(f"File '{filename}' does not exist.")
+            return
+        
         with open(filename, 'r') as file:
             for i, line in enumerate(file):
                 # Check if the number is negative
@@ -77,5 +84,7 @@ class UVSim:
                 '''Halt the program'''
                 print("Program halted.")
                 return "Program halted."
+            case default:
+                print("something is broken")
             
             
