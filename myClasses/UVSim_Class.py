@@ -1,4 +1,7 @@
+import os
+
 class UVSim:
+
     def __init__(self):
         self.memory = [0] * 100
         self.accumulator = 0
@@ -11,6 +14,10 @@ class UVSim:
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
+        if not os.path.exists(filename):
+            print(f"File '{filename}' does not exist.")
+            return
+        
         with open(filename, 'r') as file:
             for i, line in enumerate(file):
                 # Check if the number is negative
@@ -29,6 +36,9 @@ class UVSim:
 
     def execute(self):
         '''Execute Instructions'''
+        filename = input("Please enter the name of your text file to be read in: ")
+        # use filename "Test Files/Test1.txt" to run
+        self.load(filename)
         match self.operation_code:
             case 10:  # READ
                 '''Gets user input and stores it in memory specified by the operand value'''
@@ -74,3 +84,5 @@ class UVSim:
                 '''Halt the program'''
                 print("Program halted.")
                 return "Program halted."
+            
+            
