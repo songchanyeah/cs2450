@@ -1,5 +1,4 @@
-import pytest
-from Classes.UVSim_Class import UVSim
+from myClasses.UVSim_Class import UVSim
 # To run these tests, open a terminal and run "pytest" in the terminal to check if tests pass.
 
 #test that checks the fetch function 
@@ -142,3 +141,12 @@ def test_execute_op_code_43():
     
     assert sim.execute() == "Program halted."
     assert sim.execute() != "Bluey halted."
+
+
+def test_reading_in_filename(self):
+        sim = UVSim()
+        filename = "Test Files/Test1.txt"
+        sim.load(filename)
+        # Assert the desired behavior based on the loaded file
+        expected_memory = [+1007, +1008, +2007, +2008, +2109, +1109, +4300, +0000, +0000, +0000, -99999]
+        self.assertEqual(sim.memory[:len(expected_memory)], expected_memory)

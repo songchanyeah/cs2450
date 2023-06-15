@@ -29,6 +29,9 @@ class UVSim:
 
     def execute(self):
         '''Execute Instructions'''
+        filename = input("Please enter the name of your text file to be read in: ")
+        # use filename "Test Files/Test1.txt" to run
+        self.load(filename)
         match self.operation_code:
             case 10:  # READ
                 '''Gets user input and stores it in memory specified by the operand value'''
