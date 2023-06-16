@@ -39,50 +39,55 @@ class UVSim:
         filename = input("Please enter the name of your text file to be read in: ")
         # use filename "Test Files/Test1.txt" to run
         self.load(filename)
-        match self.operation_code:
-            case 10:  # READ
-                '''Gets user input and stores it in memory specified by the operand value'''
-                self.memory[self.operand] = int(
-                    input(("Type the value to be READ in console: ")))
-            case 11:  # WRITE
-                # Write a word from a specific location in memory to screen
-                print(self.memory[self.operand])
-            case 20:  # LOAD
-                '''Load a word from a specific location in memory into the accumulator'''
-                #self.accumulator = self.register[self.register_index]
-            case 21:  # STORE
-                '''Store a word from the accumulator into a specific location in memory'''
-                #self.register[self.register_index] = self.accumulator
-            case 30:  # ADD
-                '''Add a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
-                #self.accumulator = self.accumulator + \
-                   # self.register[self.register_index]
-            case 31:  # SUBTRACT
-                '''Subtract a word from a specific location in memory from the word in the accumulator (leave the result in the accumulator)'''
-               # self.accumulator = self.accumulator - \
-                    #self.register[self.register_index]
-            case 32:  # DIVIDE
-                '''Divide the word in the accumulator by a word from a specific location in memory (leave the result in the accumulator)'''
-                #self.accumulator = self.accumulator / \
-                    #self.register[self.register_index]
-            case 33:  # MULTIPLY
-                '''Multiply a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
-                #self.accumulator = self.accumulator * \
-                    #self.register[self.register_index]
-            case 40:  # BRANCH
-                '''Branch to a specific location in memory'''
-                self.instruction_counter = self.operand
-            case 41:  # BRANCHNEG
-                '''Branch to a specific location in memory if the accumulator is negative'''
-                if self.accumulator < 0:
+        while self.operation_code != 43:
+            match self.operation_code:
+                case 10:  # READ
+                    '''Gets user input and stores it in memory specified by the operand value'''
+                    self.memory[self.operand] = int(
+                        input(("Type the value to be READ in console: ")))
+                case 11:  # WRITE
+                    # Write a word from a specific location in memory to screen
+                    print(self.memory[self.operand])
+                case 20:  # LOAD
+                    '''Load a word from a specific location in memory into the accumulator'''
+                    #self.accumulator = self.register[self.register_index]
+                case 21:  # STORE
+                    '''Store a word from the accumulator into a specific location in memory'''
+                    #self.register[self.register_index] = self.accumulator
+                case 30:  # ADD
+                    '''Add a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
+                    #self.accumulator = self.accumulator + \
+                    # self.register[self.register_index]
+                case 31:  # SUBTRACT
+                    '''Subtract a word from a specific location in memory from the word in the accumulator (leave the result in the accumulator)'''
+                # self.accumulator = self.accumulator - \
+                        #self.register[self.register_index]
+                case 32:  # DIVIDE
+                    '''Divide the word in the accumulator by a word from a specific location in memory (leave the result in the accumulator)'''
+                    #self.accumulator = self.accumulator / \
+                        #self.register[self.register_index]
+                case 33:  # MULTIPLY
+                    '''Multiply a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
+                    #self.accumulator = self.accumulator * \
+                        #self.register[self.register_index]
+                case 40:  # BRANCH
+                    '''Branch to a specific location in memory'''
                     self.instruction_counter = self.operand
-            case 42:  # BRANCHZERO
-                '''Branch to a specific location in memory if the accumulator is zero'''
-                if self.accumulator == 0:
-                    self.instruction_counter = self.operand
-            case 43:  # HALT
-                '''Halt the program'''
-                print("Program halted.")
-                return "Program halted."
+                case 41:  # BRANCHNEG
+                    '''Branch to a specific location in memory if the accumulator is negative'''
+                    if self.accumulator < 0:
+                        self.instruction_counter = self.operand
+                case 42:  # BRANCHZERO
+                    '''Branch to a specific location in memory if the accumulator is zero'''
+                    if self.accumulator == 0:
+                        self.instruction_counter = self.operand
+                case 43:  # HALT
+                    '''Halt the program'''
+                    print("Program halted.")
+                    self.operation_code = 43
+                    return self.operation_code 
+
+            self.operation_code = 43 #DO NOT REMOVE YET, this breaks the while loop for the case matches
+                
             
             
