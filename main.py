@@ -8,3 +8,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# use python -m pytest -s 
+# when running pytest instead of pytest

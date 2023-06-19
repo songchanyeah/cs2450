@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 class UVSim:
 
@@ -14,11 +15,15 @@ class UVSim:
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
-        if not os.path.exists(filename):
-            print(f"File '{filename}' does not exist.")
+        current_dir = os.getcwd()
+        current_dir = current_dir + "\Test Files\""
+        relative_path += filename
+
+        if not os.path.exists(relative_path):
+            print(f"File '{relative_path}' does not exist.")
             return
         
-        with open(filename, 'r') as file:
+        with open(relative_path, 'r') as file:
             for i, line in enumerate(file):
                 # Check if the number is negative
                 sign = -1 if line[0] == '-' else 1
@@ -44,13 +49,15 @@ class UVSim:
             match self.operation_code:
                 case 10:  # READ
                     '''Gets user input and stores it in memory specified by the operand value'''
-                    try:
-                        user_input = int(input("Enter an integer between -9999 and 9999: "))
-                        if not -9999 <= user_input <= 9999:
-                            raise ValueError("Input must be between -9999 and 9999")
+                    user_input = int(input("Enter an integer between -9999 and 9999: "))
+                    # try:
+                    if not -9999 <= user_input <= 9999:
+                        raise ValueError("Input must be between -9999 and 9999")
                         self.memory[self.operand] = user_input
-                    except ValueError as e:
+                    else:
                         print(e)
+                    # except ValueError as e:
+                        # print(e)
                 case 11:  # WRITE
                     '''Write a word from a specific location in memory to screen'''
                     print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
