@@ -116,7 +116,4 @@ class UVSim:
                 print("Invalid operation code.")
             
             self.instruction_counter += 1
-            print(self.memory)
-
-            
-            
+            #print(self.memory)
