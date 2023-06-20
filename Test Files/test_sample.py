@@ -145,7 +145,7 @@ def test_execute_op_code_43():
 
 def test_reading_in_filename():
         sim = UVSim()
-        filename = "Test Files/Test1.txt"
+        filename = "Test1.txt"
         sim.load(filename)
         # Assert the desired behavior based on the loaded file
         expected_memory = [+1007, +1008, +2007, +2008, +2109, +1109, +4300, +0000, +0000, +0000, -99999]
