@@ -35,8 +35,12 @@ class UVSim:
     def execute(self):
         '''Execute Instructions'''
         filename = input("Please enter the name of your text file to be read in: ")
+        current_dir = os.getcwd()
+        current_dir = current_dir + "\Test Files\\"
+        relative_path = current_dir + filename
         # use filename "Test Files/Test1.txt" to run
-        self.load(filename)
+        
+        self.load(relative_path)
         
         while True:
             self.fetch()
