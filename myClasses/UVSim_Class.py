@@ -38,7 +38,6 @@ class UVSim:
         current_dir = os.getcwd()
         current_dir = current_dir + "\Test Files\\"
         relative_path = current_dir + filename
-        # use filename "Test Files/Test1.txt" to run
         
         self.load(relative_path)
         
