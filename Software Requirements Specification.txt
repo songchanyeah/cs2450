@@ -1,0 +1,27 @@
+### 3 non-functional requirements ###
+It is a simple app so it should be fast. 
+It should be easily maintainable.
+It should be reliable. 
+The GUI should be simple and clear.
+
+### 15 functional requirements ###
+It should load instructions into memory.
+It should fetch instructions from memory.
+It should execute instructions.
+It should read in files correctly.
+It should put the instructions in the file into a data structure correctly.
+
+It should read and distinguish operation codes correctly.
+It should take input from the users.
+It should put the input taken from the user to the memory.
+It needs to write a word from a specific location in memory.
+It needs to load a word from a specific location in memory.
+
+It need to store a word from the accumulator into a specific memory.
+It needs to add a word from a specific location in memory to the word 
+in the accumulator (leave the result in the accumulator). 
+It needs to subtract a word from a specific location in memory from 
+the word in the accumulator (leave the result in the accumulator).
+It needs to multiply a word from a specific location in memory to the word in 
+the accumulator (leave the result in the accumulator).
+It needs to branch to a specific location in memory.
