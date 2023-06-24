@@ -1,7 +1,7 @@
+import pytest
 from myClasses.UVSim_Class import UVSim
-# To run these tests, open a terminal and run "pytest" in the terminal to check if tests pass.
 
-#test that checks the fetch function 
+# Test that checks the fetch function UT1
 def test_fetch():
     sim = UVSim()
     sim.memory[0] = 1002  # opcode 10 and operand 02
@@ -15,8 +15,20 @@ def test_fetch():
     assert sim.operation_code == 10
     assert sim.operand == 2
 
-# testing UVSim class constructor
-def test_UVSim():
+#UT2
+def test_fetch_instruction():
+    uvsim = UVSim()
+
+    uvsim.memory = [1007, 2010, 3018, 2119, 4017]
+    uvsim.instruction_counter = 2
+    uvsim.fetch()
+
+    assert uvsim.instruction_register == 3018
+    assert uvsim.operation_code == 30
+    assert uvsim.operand == 18
+
+# Test the UVSim class constructor UT3
+def test_UVSim_Constructor():
     uvsim = UVSim()
 
     assert uvsim.memory == [0] * 100
@@ -26,128 +38,216 @@ def test_UVSim():
     assert uvsim.operation_code == 0
     assert uvsim.operand == 0
 
-#test that checks the load function
+
+#UT4
+def test_UVSim_Memory():
+    uvsim = UVSim()
+
+    assert uvsim.memory == [0] * 100
+    assert isinstance(uvsim.memory, list)
+
+#UT5
+def test_UVSim_Memory_Range_Error():
+    uvsim = UVSim()
+
+    with pytest.raises(IndexError):
+        value = uvsim.memory[101]
+
+#UT6
+def test_UVSim_Accumulator():
+    uvsim = UVSim()
+
+    assert uvsim.accumulator == 0
+    assert isinstance(uvsim.accumulator, int)
+
+#UT7
+def test_UVSim_Instruction_Counter():
+    uvsim = UVSim()
+
+    assert uvsim.instruction_counter == 0
+    assert isinstance(uvsim.instruction_counter, int)
+
+#UT8
+def test_UVSim_Instruction_Register():
+    uvsim = UVSim()
+
+    assert uvsim.instruction_register == 0
+    assert isinstance(uvsim.instruction_register, int)
+
+#UT9
+def test_UVSim_Operation_Code():
+    uvsim = UVSim()
+
+    assert uvsim.operation_code == 0
+    assert isinstance(uvsim.operation_code, int)
+
+#UT10
+def test_UVSim_Operand():
+    uvsim = UVSim()
+    
+    assert uvsim.operand == 0
+    assert isinstance(uvsim.operand, int)
+
+
+# Test that checks the load function UT11
 def test_load():
     sim = UVSim()
-    sim.load('Test1.txt')
+    sim.load('Test Files/Test1.txt')
     expected_memory = [+1007, +1008, +2007, +2008, +2109, +1109, +4300, +0000, +0000, +0000, -99999]
 
     assert sim.memory[:len(expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {sim.memory[:len(expected_memory)]}'
 
-#another test for the fetch function
-def test_new_fetch_update():
+#UT12
+def test_Load_Wrong_Input(capsys):
     sim = UVSim()
+    sim.load('FakeFile.txt')
 
-    sim.load('Test1.txt')
-    sim.fetch()
+    captured = capsys.readouterr()
+    expected_output = f"File 'FakeFile.txt' does not exist.\n"
+    assert captured.out == expected_output
 
-    assert sim.instruction_register == +\
-        1007, f'Expected instruction register to be +1007, but got {sim.instruction_register}'
-    assert sim.operation_code == 10, f'Expected operation code 10, but got {sim.operation_code}'
-    assert sim.operand == 7, f'Expected operand 07, but got {sim.operand}'
-
-#Tests the execute function with the op_code 10 READ
-def test_execute_op_code_10():
+#UT13
+def test_load_empty_file():
     sim = UVSim()
-    sim.operation_code = 10
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.load('Test File/empty.txt')
+    assert sim.memory == [0] * 100
 
-#Tests the execute function with the op_code 11 WRITE
-def test_execute_op_code_11():
+#UT15
+def test_execute_op_code_11(capsys):
     sim = UVSim()
-    sim.operation_code = 11
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.memory[sim.operand] = 5678
+    sim.write_output()
+    captured = capsys.readouterr()
+    assert captured.out.strip().endswith("Memory[0]: 5678")
 
-#Tests the execute function with the op_code 20 LOAD
+
+#UT16
 def test_execute_op_code_20():
     sim = UVSim()
-    sim.operation_code = 20
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.memory[sim.operand] = 4321
+    sim.load_word()
+    assert sim.accumulator == 4321
 
-#Tests the execute function with the op_code 21 STORE
+#UT17
 def test_execute_op_code_21():
     sim = UVSim()
-    sim.operation_code = 21
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 8765
+    sim.store_word()
+    assert sim.memory[sim.operand] == 8765
 
-#Tests the execute function with the op_code 30 ADD
+#UT18
 def test_execute_op_code_30():
     sim = UVSim()
-    sim.operation_code = 30
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 100
+    sim.memory[sim.operand] = 200
+    sim.add_word()
+    assert sim.accumulator == 300
 
-#Tests the execute function with the op_code 31 SUBTRACT
+#UT19
 def test_execute_op_code_31():
     sim = UVSim()
-    sim.operation_code = 31
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 500
+    sim.memory[sim.operand] = 200
+    sim.subtract_word()
+    assert sim.accumulator == 300
 
-#Tests the execute function with the op_code 32 DIVIDE
+#UT20
 def test_execute_op_code_32():
     sim = UVSim()
-    sim.operation_code = 32
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 100
+    sim.memory[sim.operand] = 5
+    sim.divide_word()
+    assert sim.accumulator == 20
 
-#Tests the execute function with the op_code 33 MULTIPLY
+#UT21
+def test_execute_op_code_32_with_zero():
+    sim = UVSim()
+    sim.accumulator = 100
+    sim.memory[sim.operand] = 0
+    with pytest.raises(ZeroDivisionError):
+        sim.divide_word()
+
+#UT22
 def test_execute_op_code_33():
     sim = UVSim()
-    sim.operation_code = 33
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 50
+    sim.memory[sim.operand] = 4
+    sim.multiply_word()
+    assert sim.accumulator == 200
 
-#Tests the execute function with the op_code 40 BRANCH
+#UT22
 def test_execute_op_code_40():
     sim = UVSim()
-    sim.operation_code = 40
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.operand = 10
+    sim.branch_memory()
+    assert sim.instruction_counter == sim.operand
 
-#Tests the execute function with the op_code 41 BRANCHNEG
+#UT23
 def test_execute_op_code_41():
     sim = UVSim()
-    sim.operation_code = 41
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = -5
+    sim.operand = 10
+    sim.branch_negative()
+    assert sim.instruction_counter == sim.operand
 
-#Tests the execute function with the op_code 42 BRANCHZERO
+def test_execute_op_code_41_no_branch():
+    sim=UVSim()
+    sim.accumulator = 5
+    sim.operand = 10
+    sim.branch_negative()
+    assert sim.instruction_counter != sim.operand
+
+#UT24
 def test_execute_op_code_42():
     sim = UVSim()
-    sim.operation_code = 42
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
+    sim.accumulator = 0
+    sim.operand = 10
+    sim.branch_zero()
+    assert sim.instruction_counter == sim.operand
 
-#Tests the execute function with the op_code 43 Halt
+def test_execute_op_code_42_no_branch():
+    sim = UVSim()
+    sim.accumulator = 5
+    sim.operand = 10
+    sim.branch_zero()
+    assert sim.instruction_counter != sim.operand
+
+#UT25
 def test_execute_op_code_43():
     sim = UVSim()
-    sim.operation_code = 43
-    
-    assert sim.execute() == "Program halted."
-    assert sim.execute() != "Bluey halted."
 
+    assert sim.halt_program() == "Program halted."
 
-def test_reading_in_filename():
-        sim = UVSim()
-        filename = "Test1.txt"
-        sim.load(filename)
-        # Assert the desired behavior based on the loaded file
-        expected_memory = [+1007, +1008, +2007, +2008, +2109, +1109, +4300, +0000, +0000, +0000, -99999]
-        assert sim.memory[:len(expected_memory)] == expected_memory
+def test_invalid_operation(capsys):
+    sim = UVSim()
+    sim.invalid_operation()
+    captured = capsys.readouterr()
+    assert captured.out.strip() == "Invalid operation code."
 
+# Test reading in a filename and loading the corresponding file UT26
+def test_reading_in_filename_2():
+    sim = UVSim()
+    filename = "Test Files/Test2.txt"
+    sim.load(filename)
+    # Assert the desired behavior based on the loaded file
+    expected_memory = [+1009,+1010,+2009,+3110,+4107,+1109,+4300,+1110,+4300,+0000,+0000,-99999]
+    assert sim.memory[:len(expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {sim.memory[:len(expected_memory)]}'
+
+#UT27
+def test_load_data_type_text1():
+    sim = UVSim()
+    sim.load('Test Files/Test1.txt')
+    expected_memory = [+1007, +1008, +2007, +2008, +2109, +1109, +4300, +0000, +0000, +0000, -99999]
+
+    assert sim.memory[:len(expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {sim.memory[:len(expected_memory)]}'
+    assert isinstance(sim.memory, list)
+
+#UT28
+def test_load_data_type_text2():
+    sim = UVSim()
+    filename = "Test Files/Test2.txt"
+    sim.load(filename)
+    # Assert the desired behavior based on the loaded file
+    expected_memory = [+1009,+1010,+2009,+3110,+4107,+1109,+4300,+1110,+4300,+0000,+0000,-99999]
+    assert sim.memory[:len(expected_memory)] == expected_memory, f'Expected {expected_memory}, but got {sim.memory[:len(expected_memory)]}'
+    assert isinstance(sim.memory, list)
