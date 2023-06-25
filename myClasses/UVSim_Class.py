@@ -31,6 +31,68 @@ class UVSim:
         self.operation_code = self.instruction_register // 100
         # Discard first two digits so we just have the last two (operand)
         self.operand = self.instruction_register % 100
+    
+    def halt_program(self):
+        print("Program halted.")
+        return "Program halted."
+
+    def read_input(self):
+        print("Triggered READ")
+        try:
+            user_input = int(input("Enter an integer between -9999 and 9999: "))
+            if not -9999 <= user_input <= 9999:
+                raise ValueError("Input must be between -9999 and 9999")
+            self.memory[self.operand] = user_input
+        except ValueError as e:
+            print(e)
+
+    def write_output(self):
+        print("Triggered WRITE")
+        print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
+
+    def load_word(self):
+        print("Triggered LOAD")
+        self.accumulator = self.memory[self.operand]
+
+    def store_word(self):
+        print("Triggered STORE")
+        self.memory[self.operand] = self.accumulator
+
+    def add_word(self):
+        print("Triggered ADD")
+        self.accumulator += self.memory[self.operand]
+
+    def subtract_word(self):
+        print("Triggered SUBTRACT")
+        self.accumulator -= self.memory[self.operand]
+
+    def divide_word(self):
+        print("Triggered DIVIDE")
+        if self.memory[self.operand] != 0:
+            self.accumulator /= self.memory[self.operand]
+        else:
+            raise ZeroDivisionError("Cannot divide by zero")
+
+    def multiply_word(self):
+        print("Triggered MULTIPLY")
+        self.accumulator *= self.memory[self.operand]
+
+    def branch_memory(self):
+        print("Triggered BRANCH")
+        self.instruction_counter = self.operand
+
+    def branch_negative(self):
+        print("Triggered BRANCHNEG")
+        if self.accumulator < 0:
+            self.instruction_counter = self.operand
+
+    def branch_zero(self):
+        print("Triggered BRANCHZERO")
+        if self.accumulator == 0:
+            self.instruction_counter = self.operand
+
+    def invalid_operation(self):
+        print("Invalid operation code.")
 
     def execute(self):
         '''Execute Instructions'''
@@ -43,80 +105,45 @@ class UVSim:
         
         while True:
             self.fetch()
-            if self.operation_code == 43: # HALT
-                '''Halt the program'''
-                print("Program halted.")
-                break  
-            
+            if self.operation_code == 43:  # HALT
+                self.halt_program()
+                break
+
             elif self.operation_code == 10:  # READ
-                '''Gets user input and stores it in memory specified by the operand value'''
-                print("Triggered READ")
-                try:
-                    user_input = int(input("Enter an integer between -9999 and 9999: "))
-                    if not -9999 <= user_input <= 9999:
-                        raise ValueError("Input must be between -9999 and 9999")
-                    self.memory[self.operand] = user_input
-                except ValueError as e:
-                    print(e)
-                        
-            elif self.operation_code == 11: # WRITE
-                '''Write a word from a specific location in memory to screen'''
-                print("Triggered WRITE")
-                print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
+                self.read_input()
+
+            elif self.operation_code == 11:  # WRITE
+                self.write_output()
 
             elif self.operation_code == 20:  # LOAD
-                '''Load a word from a specific location in memory into the accumulator'''
-                print("Triggered LOAD")
-                self.accumulator = self.memory[self.operand]
+                self.load_word()
 
             elif self.operation_code == 21:  # STORE
-                '''Store a word from the accumulator into a specific location in memory'''
-                print("Triggered STORE")
-                self.memory[self.operand] = self.accumulator
+                self.store_word()
 
             elif self.operation_code == 30:  # ADD
-                '''Add a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
-                print("Triggered ADD")
-                self.accumulator += self.memory[self.operand]
+                self.add_word()
 
-            elif self.operation_code == 31: # SUBTRACT
-                '''Subtract a word from a specific location in memory from the word in the accumulator (leave the result in the accumulator)'''
-                print("Triggered SUBTRACT")
-                self.accumulator -= self.memory[self.operand]
+            elif self.operation_code == 31:  # SUBTRACT
+                self.subtract_word()
 
             elif self.operation_code == 32:  # DIVIDE
-                '''Divide the word in the accumulator by a word from a specific location in memory (leave the result in the accumulator)'''
-                print("Triggered DIVIDE")
-                if self.memory[self.operand] != 0:
-                    self.accumulator /= self.memory[self.operand]
-                else:
-                    raise ZeroDivisionError("Cannot divide by zero")
-                
-            elif self.operation_code == 33:# MULTIPLY
-                '''Multiply a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)'''
-                print("Triggered MULTIPLY")
-                self.accumulator *= self.memory[self.operand]
+                self.divide_word()
 
-            elif self.operation_code == 40:# BRANCH
-                '''Branch to a specific location in memory'''
-                print("Triggered BRANCH")
-                self.instruction_counter = self.operand
-                
-            elif self.operation_code == 41: # BRANCHNEG
-                '''Branch to a specific location in memory if the accumulator is negative'''
-                print("Triggered BRANCHNEG")
-                if self.accumulator < 0:
-                    self.instruction_counter = self.operand
-                    continue
-                
-            elif self.operation_code == 42: # BRANCHZERO
-                '''Branch to a specific location in memory if the accumulator is zero'''
-                print("Triggered BRANCHZERO")
-                if self.accumulator == 0:
-                    self.instruction_counter = self.operand
-                    continue
+            elif self.operation_code == 33:  # MULTIPLY
+                self.multiply_word()
+
+            elif self.operation_code == 40:  # BRANCH
+                self.branch_memory()
+
+            elif self.operation_code == 41:  # BRANCHNEG
+                self.branch_negative()
+
+            elif self.operation_code == 42:  # BRANCHZERO
+                self.branch_zero()
+
             else:
-                print("Invalid operation code.")
-            
+                self.invalid_operation()
+                
             self.instruction_counter += 1
             #print(self.memory)
