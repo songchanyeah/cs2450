@@ -2,19 +2,30 @@ import tkinter as tk
 from tkinter import *
 import os
 from myClasses.UVSim_Class import UVSim
+import tkinter.filedialog as filedialog
 
 class UVSimGUI(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.uvsim = UVSim(self.output_instruction_process, self.output_accumulator)
+        self.uvsim = UVSim(self.output_instruction_process, self.output_accumulator, self.output_instruction_process, self.handle_user_input)
         self.create_widgets()
         self.user_input_ready = tk.BooleanVar(value=False)
 
     def create_widgets(self):
+        ##### Save File Button #####
+        self.save_button = tk.Button(self.master, text="Save", command=self.save_file)
+        self.save_button.grid(row=0, column=0, sticky=W)
+
+        ##### Load File Button #####
+        self.load_button = tk.Button(self.master, text="Load", command=self.load_file)
+        self.load_button.grid(row=0, column=0, sticky=E)
+
         ##### Filename #####
+        '''
         self.filename_label = tk.Label(self.master, text="Enter the filename:")
         self.filename_label.grid(row=0, column=0, sticky=W)
+        '''
 
         self.entry1 = tk.Entry(self.master)
         self.entry1.grid(row=0, column=2, sticky=W)
@@ -93,12 +104,61 @@ class UVSimGUI(tk.Frame):
         self.accumulator_entry.insert(tk.END, text)
 
     def get_user_input(self):
-        self.user_input_from_gui = int(self.user_input_entry.get())
-        self.user_input_entry.delete(0, tk.END)
-        self.uvsim.user_input_from_gui = self.user_input_from_gui  # Set the user_input_from_gui variable in UVSim
+        # self.user_input_from_gui = int(self.user_input_entry.get())
+        # self.user_input_entry.delete(0, tk.END)
+        # self.uvsim.user_input_from_gui = self.user_input_from_gui  # Set the user_input_from_gui variable in UVSim
 
-        return self.user_input_from_gui
+        # return self.user_input_from_gui
+        user_input = self.user_input_entry.get()
+        if user_input:
+            self.uvsim.set_user_input(int(user_input))
+            self.user_input_entry.delete(0, tk.END)
 
+    def handle_user_input(self):
+        # This method is called by UVSim class when user input is needed
+        self.user_input_button.config(state=tk.NORMAL)  # Enable the user input button
+        self.master.wait_variable(self.user_input_ready)  # Wait for user input
+        self.user_input_ready.set(False)  # Reset the user input flag in the GUI
+
+    def update_user_input_ready(self):
+        # This method is called by the user input button's command
+        self.user_input_ready.set(True)
+
+    def output_instruction_process(self, text):
+        self.output_text.insert(tk.END, text + "\n")
+
+    def output_accumulator(self, text):
+        self.accumulator_entry.delete(0, tk.END)
+        self.accumulator_entry.insert(tk.END, text)
+
+    def save_file(self):
+        selected_file = filedialog.asksaveasfilename()
+        if not selected_file:
+            return  # User canceled the folder selection
+
+        try:
+            with open(selected_file, 'w') as file:
+                # Write the data to the file
+                file.write("Your data to be saved")
+
+            self.output_label.config(text="File saved successfully.")
+        except Exception as e:
+            self.output_label.config(text="Error occurred while saving the file.")
+
+    def load_file(self):
+        filepath = filedialog.askopenfilename()
+        if not filepath:
+            return  # User canceled the file selection
+
+        if os.path.exists(filepath):
+            filename = os.path.basename(filepath)
+            self.output_label.config(text=filename + " loaded successfully.")
+            self.entry1.delete(0, tk.END)
+            self.entry1.insert(0, filename)  # Update entry1 with the loaded filename
+            self.uvsim.execute(filepath)
+            self.display_memory()
+        else:
+            self.output_label.config(text="File does not exist.")
     
 
 if __name__ == "__main__":
@@ -106,28 +166,4 @@ if __name__ == "__main__":
     app = UVSimGUI(root)
     app.mainloop()
 
-
-
-
-# self.load_button = tk.Button(self.master, text="Load File", command=self.load_file)
-# self.load_button.pack()
-
-# def load_file(self):
-#     filename = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-#     if filename:
-#         self.entry.delete(0, tk.END)
-#         self.entry.insert(tk.END, filename)
-#         self.uvsim.load(filename)
-#         self.output_text.insert(tk.END, "File loaded successfully.\n")
-
-# from myClasses.UVSim_Class import UVSim
-
-# #this file is to run the main python program.
-
-# def main():
-#     uvsim = UVSim()
-#     uvsim.execute()
-
-# if __name__ == "__main__":
-#     main()
 

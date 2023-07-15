@@ -2,7 +2,7 @@ import os
 
 class UVSim:
 
-    def __init__(self, output_function, output_accumulator):
+    def __init__(self, output_function, output_accumulator, output_instruction_process, handle_user_input):
         self.memory = [0] * 100
         self.accumulator = 0
         self.instruction_counter = 0
@@ -14,6 +14,9 @@ class UVSim:
         # self.output_user_input = output_user_input
         # self.user_input_from_gui = user_input
         self.user_input_from_gui = 0
+
+        self.output_instruction_process = output_instruction_process
+        self.handle_user_input = handle_user_input
 
     def load(self, filename):
         '''Load Instructions Into Memory'''
@@ -38,6 +41,9 @@ class UVSim:
         # Discard first two digits so we just have the last two (operand)
         self.operand = self.instruction_register % 100
 
+    def set_user_input(self, user_input):
+        self.user_input_from_gui = user_input
+
     def execute(self, filename):
         '''Execute Instructions'''
         
@@ -52,20 +58,29 @@ class UVSim:
             
             elif self.operation_code == 10:  # READ
                 '''Gets user input and stores it in memory specified by the operand value'''
-                self.output_instruction_process("Triggered READ, operand 10")
-                try:
-                    # user_input = int(input("Enter an integer between -9999 and 9999: "))
-                    user_input = self.user_input_from_gui
-                    if not -9999 <= user_input <= 9999:
-                        raise ValueError("Input must be between -9999 and 9999")
-                    self.memory[self.operand] = user_input
-                except ValueError as e:
-                    print(e)
+                # self.output_instruction_process("Triggered READ, operand 10")
+                # try:
+                #     # user_input = int(input("Enter an integer between -9999 and 9999: "))
+                #     user_input = self.user_input_from_gui
+                #     if not -9999 <= user_input <= 9999:
+                #         raise ValueError("Input must be between -9999 and 9999")
+                #     self.memory[self.operand] = user_input
+                # except ValueError as e:
+                #     print(e)
+
+                self.output_instruction_process("Waiting for user input...")
+
+                # Call the handle_user_input method provided by the GUI to wait for user input
+                self.handle_user_input()
+
+                if self.user_input_from_gui is not None:
+                    self.memory[self.operand] = self.user_input_from_gui
+
                         
             elif self.operation_code == 11: # WRITE
                 '''Write a word from a specific location in memory to screen'''
                 self.output_instruction_process("Triggered WRITE, operand 11")
-                print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
+                # print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
 
             elif self.operation_code == 20:  # LOAD
                 '''Load a word from a specific location in memory into the accumulator'''
