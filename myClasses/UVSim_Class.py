@@ -37,6 +37,68 @@ class UVSim:
         self.operation_code = self.instruction_register // 100
         # Discard first two digits so we just have the last two (operand)
         self.operand = self.instruction_register % 100
+    
+    def halt_program(self):
+        print("Program halted.")
+        return "Program halted."
+
+    def read_input(self):
+        print("Triggered READ")
+        try:
+            user_input = int(input("Enter an integer between -9999 and 9999: "))
+            if not -9999 <= user_input <= 9999:
+                raise ValueError("Input must be between -9999 and 9999")
+            self.memory[self.operand] = user_input
+        except ValueError as e:
+            print(e)
+
+    def write_output(self):
+        print("Triggered WRITE")
+        print(f"Memory[{self.operand}]: {self.memory[self.operand]}")
+
+    def load_word(self):
+        print("Triggered LOAD")
+        self.accumulator = self.memory[self.operand]
+
+    def store_word(self):
+        print("Triggered STORE")
+        self.memory[self.operand] = self.accumulator
+
+    def add_word(self):
+        print("Triggered ADD")
+        self.accumulator += self.memory[self.operand]
+
+    def subtract_word(self):
+        print("Triggered SUBTRACT")
+        self.accumulator -= self.memory[self.operand]
+
+    def divide_word(self):
+        print("Triggered DIVIDE")
+        if self.memory[self.operand] != 0:
+            self.accumulator /= self.memory[self.operand]
+        else:
+            raise ZeroDivisionError("Cannot divide by zero")
+
+    def multiply_word(self):
+        print("Triggered MULTIPLY")
+        self.accumulator *= self.memory[self.operand]
+
+    def branch_memory(self):
+        print("Triggered BRANCH")
+        self.instruction_counter = self.operand
+
+    def branch_negative(self):
+        print("Triggered BRANCHNEG")
+        if self.accumulator < 0:
+            self.instruction_counter = self.operand
+
+    def branch_zero(self):
+        print("Triggered BRANCHZERO")
+        if self.accumulator == 0:
+            self.instruction_counter = self.operand
+
+    def invalid_operation(self):
+        print("Invalid operation code.")
 
     def execute(self, filename):
         '''Execute Instructions'''
@@ -45,6 +107,7 @@ class UVSim:
         
         while True:
             self.fetch()
+<<<<<<< HEAD
             if self.operation_code == 43: # HALT
                 '''Halt the program'''
                 self.output_instruction_process("Program halted.")
@@ -122,6 +185,48 @@ class UVSim:
             else:
                 self.output_instruction_process("Invalid operation code.")
             
+=======
+            if self.operation_code == 43:  # HALT
+                self.halt_program()
+                break
+
+            elif self.operation_code == 10:  # READ
+                self.read_input()
+
+            elif self.operation_code == 11:  # WRITE
+                self.write_output()
+
+            elif self.operation_code == 20:  # LOAD
+                self.load_word()
+
+            elif self.operation_code == 21:  # STORE
+                self.store_word()
+
+            elif self.operation_code == 30:  # ADD
+                self.add_word()
+
+            elif self.operation_code == 31:  # SUBTRACT
+                self.subtract_word()
+
+            elif self.operation_code == 32:  # DIVIDE
+                self.divide_word()
+
+            elif self.operation_code == 33:  # MULTIPLY
+                self.multiply_word()
+
+            elif self.operation_code == 40:  # BRANCH
+                self.branch_memory()
+
+            elif self.operation_code == 41:  # BRANCHNEG
+                self.branch_negative()
+
+            elif self.operation_code == 42:  # BRANCHZERO
+                self.branch_zero()
+
+            else:
+                self.invalid_operation()
+                
+>>>>>>> 20d0843b0056497b1208d0cf65462e6b5f0e20eb
             self.instruction_counter += 1
 
     
