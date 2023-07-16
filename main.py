@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk, colorchooser
 import os
 from myClasses.UVSim_Class import UVSim
 import tkinter.filedialog as filedialog
@@ -9,10 +10,63 @@ class UVSimGUI(tk.Frame):
         super().__init__(master)
         self.master = master
         self.uvsim = UVSim(self.output_instruction_process, self.output_accumulator, self.output_instruction_process, self.handle_user_input)
-        self.create_widgets()
         self.user_input_ready = tk.BooleanVar(value=False)
+        self.primary_color = (76, 114, 29)
+        self.off_color = (255, 255, 255)
+        self.load_color_scheme()
+        self.create_widgets()
+        self.apply_color_scheme()
+
+    def load_color_scheme(self):
+        try:
+            with open("config.txt") as file:
+                lines = file.readlines()
+                self.primary_color = tuple(int(value) for value in lines[0].strip().split(","))
+                self.off_color = tuple(int(value) for value in lines[1].strip().split(","))
+        except FileNotFoundError:
+            # Default color scheme
+            self.primary_color = (76, 114, 29)
+            self.off_color = (255, 255, 255)
+
+    def save_color_scheme(self):
+        config = f"{','.join(str(value) for value in self.primary_color)}\n{','.join(str(value) for value in self.off_color)}"
+        with open("config.txt", "w") as file:
+            file.write(config)
+
+    def rgb_to_hex(self, r, g, b):
+        return '#%02x%02x%02x' % (r, g, b)
+    
+    def apply_color_scheme(self):
+        primary_color_hex = self.rgb_to_hex(*self.primary_color)
+        self.master.configure(background=primary_color_hex)
+
+    ### Change Background Color
+    def change_primary_color(self):
+        color = colorchooser.askcolor()[0]
+        if color:
+            self.primary_color = tuple(int(value) for value in color)
+            self.apply_color_scheme()
 
     def create_widgets(self):
+        # Configure the primary color for the UI
+        style = ttk.Style()
+        primary_color_hex = self.rgb_to_hex(*self.primary_color)
+        style.configure("TButton", background=primary_color_hex)
+
+        # self.filename_label = ttk.Label(self.master, text="Enter the filename:")
+        # self.filename_label.grid(row=4, column=0, sticky=tk.W)
+        
+        # self.entry1 = ttk.Entry(self.master)
+        # self.entry1.grid(row=4, column=0, sticky=tk.E)
+
+        ##### Save Color Scheme Button #####
+        # self.save_color_scheme_button = tk.Button(self.master, text="Save Color Scheme", command=self.save_color_scheme)
+        # self.save_color_scheme_button.grid(row=4, column=4, sticky=tk.W+tk.E)
+
+        self.change_color_button = tk.Button(self.master, text="Change Primary Color", command=self.change_primary_color)
+        self.change_color_button.grid(row=4, column=3, sticky=tk.W)
+
+
         ##### Save File Button #####
         self.save_button = tk.Button(self.master, text="Save", command=self.save_file)
         self.save_button.grid(row=0, column=0, sticky=W)
