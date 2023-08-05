@@ -143,3 +143,18 @@ class UVSim:
                 self.output_instruction_process("Invalid operation code.")
 
             data['instruction_counter'] += 1
+
+#troubleshooting
+def output_function(x):
+    print(x)
+def output_accumulator(x):
+    print(x)
+def output_instruction_process(x):
+    print(x)
+def handle_user_input(filename):
+    pass
+
+uvsim_test = UVSim(output_function, output_accumulator, 
+                   output_instruction_process, handle_user_input)
+uvsim_test.load('Test Files/Test2_converted.txt')
+uvsim_test.execute('Test Files/Test2_converted.txt')
