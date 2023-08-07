@@ -16,6 +16,7 @@ class UVSimGUI(tk.Frame):
         self.load_color_scheme()
         self.create_widgets()
         self.apply_color_scheme()
+        self.file_paths = []
 
     def load_color_scheme(self):
         try:
@@ -64,57 +65,52 @@ class UVSimGUI(tk.Frame):
         # self.save_color_scheme_button.grid(row=4, column=4, sticky=tk.W+tk.E)
 
         self.change_color_button = tk.Button(self.master, text="Change Primary Color", command=self.change_primary_color)
-        self.change_color_button.grid(row=4, column=3, sticky=tk.W)
+        self.change_color_button.grid(row=8, column=4, sticky=tk.W)
 
 
-        ##### Save File Button #####
+         ##### Save File Button #####
         self.save_button = tk.Button(self.master, text="Save", command=self.save_file)
-        self.save_button.grid(row=0, column=0, sticky=W)
+        self.save_button.grid(row=1, column=0, padx=5, pady=5, sticky="w")
 
         ##### Load File Button #####
         self.load_button = tk.Button(self.master, text="Load", command=self.load_file)
-        self.load_button.grid(row=0, column=0, sticky=E)
+        self.load_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
-        ##### Filename #####
-        '''
-        self.filename_label = tk.Label(self.master, text="Enter the filename:")
-        self.filename_label.grid(row=0, column=0, sticky=W)
-        '''
-
+        ##### Filename Entry #####
         self.entry1 = tk.Entry(self.master)
-        self.entry1.grid(row=0, column=2, sticky=W)
+        self.entry1.grid(row=1, column=2, padx=5, pady=5, sticky="ew")
 
         self.execute_button = tk.Button(self.master, text="Execute", command=self.execute_program)
-        self.execute_button.grid(row=0, column=2, sticky=E)
-        
+        self.execute_button.grid(row=1, column=4, padx=5, pady=5, sticky="e")
+
         self.output_label = tk.Label(self.master, text="")
-        self.output_label.grid(row=0, column=3, sticky=W)
+        self.output_label.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="w")
 
         ### < For UVSim Class > ###
         ##### User Input for Read Operation #####
         self.user_input_for_read_label = tk.Label(self.master, text="Enter an integer between -9999 and 9999:")
-        self.user_input_for_read_label.grid(row=1, column=0, sticky=W)
+        self.user_input_for_read_label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
         self.user_input_entry = tk.Entry(self.master)
-        self.user_input_entry.grid(row=1, column=2, sticky=W)
+        self.user_input_entry.grid(row=2, column=2, padx=5, pady=5, sticky="ew")
 
         self.user_input_button = tk.Button(self.master, text="Enter", command=self.get_user_input)
-        self.user_input_button.grid(row=1, column=2, sticky=E)
+        self.user_input_button.grid(row=2, column=4, padx=5, pady=5, sticky="e")
 
         ### < For UVSim Class > ###
         ##### Accumulator #####
         self.accumulator_label = tk.Label(self.master, text="Accumulator: ")
-        self.accumulator_label.grid(row=2, column=0, sticky=W)
+        self.accumulator_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 
         self.accumulator_entry = tk.Entry(self.master)
-        self.accumulator_entry.grid(row=2, column=2, sticky=W)
+        self.accumulator_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
         ##### Memory #####
         self.listbox_for_memory = tk.Listbox(self.master)
-        self.listbox_for_memory.grid(row=3, column=0, sticky=tk.NSEW)
+        self.listbox_for_memory.grid(row=5, column=0, columnspan=1, padx=5, pady=5, sticky="nsew")
 
         self.scrollbar_for_memory = tk.Scrollbar(self.master, orient=tk.VERTICAL)
-        self.scrollbar_for_memory.grid(row=3, column=1, sticky=tk.NS)
+        self.scrollbar_for_memory.grid(row=5, column=1, padx=5, pady=5, sticky="ns")
 
         self.listbox_for_memory.config(yscrollcommand=self.scrollbar_for_memory.set)
         self.scrollbar_for_memory.config(command=self.listbox_for_memory.yview)
@@ -122,25 +118,27 @@ class UVSimGUI(tk.Frame):
         ### < For UVSim Class > ###
         ##### Instructions Run #####
         self.output_text = tk.Text(self.master, height=10, width=50)
-        self.output_text.grid(row=3, column=2)
+        self.output_text.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky="nsew")
+
+        ### Notebook for tabs ###
+        self.notebook = ttk.Notebook(self.master)
+        self.notebook.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky="nsew")
 
 
     def execute_program(self):
-        justfilename = self.entry1.get()
-        current_dir = os.getcwd()
-        current_dir = current_dir + "\Test Files\\"
-        filename = current_dir + justfilename
+        # Get the currently selected tab index in the notebook
+        current_tab_index = self.notebook.index(self.notebook.select())
 
-        # if filename:
-        if os.path.exists(filename):
-            self.output_label.config(text = justfilename + " loaded successfully.")
-            self.entry1.delete(0, tk.END)
-            print(self.uvsim.memory)
-            self.uvsim.execute(filename)
-            self.display_memory()
-        else:
-            self.output_label.config(text = justfilename + " does not exist.")
-            self.entry1.delete(0, tk.END)
+        # Check if the selected tab index is within the range of available file paths
+        if 0 <= current_tab_index < len(self.file_paths):
+            filename = self.file_paths[current_tab_index]
+
+            if os.path.exists(filename):
+                self.output_label.config(text=filename + " loaded successfully.")
+                self.uvsim.execute(filename)
+                self.display_memory()
+            else:
+                self.output_label.config(text=filename + " does not exist.")
 
 
     def display_memory(self):
@@ -209,11 +207,28 @@ class UVSimGUI(tk.Frame):
             self.output_label.config(text=filename + " loaded successfully.")
             self.entry1.delete(0, tk.END)
             self.entry1.insert(0, filename)  # Update entry1 with the loaded filename
+            self.file_paths.append(filepath)  # Add the file path to the list
+            self.create_new_tab(filepath)
             self.uvsim.execute(filepath)
             self.display_memory()
         else:
             self.output_label.config(text="File does not exist.")
+
+    def create_new_tab(self, filepath):
+        with open(filepath, 'r') as file:
+            content = file.read()
+
+        text_widget = tk.Text(self.notebook)
+        text_widget.insert("1.0", content)
+        text_widget.config(wrap="none")
+        text_widget.grid(row=0, column=0, sticky="nsew")
+
+        self.notebook.add(text_widget, text=os.path.basename(filepath))
+        text_widget.bind("<FocusIn>", self.on_tab_focus)
     
+    def on_tab_focus(self, event):
+        current_tab = self.notebook.tab(self.notebook.select(), "text")
+        self.current_tab_index = self.notebook.index(self.notebook.select())
 
 if __name__ == "__main__":
     root = tk.Tk()
