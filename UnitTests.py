@@ -1,6 +1,8 @@
 
 import unittest
 import os
+import sys
+print(sys.path)
 from myClasses.UVSim_Class import UVSim
 
 class TestUVSim(unittest.TestCase):
@@ -15,6 +17,7 @@ class TestUVSim(unittest.TestCase):
         # Test file 1 & 2
         self.test1 = "Test Files/Test1.txt"
         self.test2 = "Test Files/Test2.txt"
+        self.test3 = "Test Files/Test3.txt"
         # 4 digit converted test files
         self.test1_4digit = "test1_4digit.txt"
         self.test2_4digit = "test2_4digit.txt"
@@ -23,15 +26,19 @@ class TestUVSim(unittest.TestCase):
         with open(self.test2_4digit, 'w') as f:
             f.write("+01009\n+01010\n+02009\n+03110\n+04107\n+01109\n+04300\n+01110\n+04300\n+00000\n+00000\n-99999")
 
-    def test_memory_size(self):
+    def test_memory_size(self):# UC1
+        '''Test the memory size of the file instance'''
         # Load a file to ensure there's an instance to check
         self.uv.load(self.test1)
         # Ensure the file instance exists
         self.assertIn(self.test1, self.uv.instances)
         # Assert the memory size for the file instance
         self.assertEqual(len(self.uv.instances[self.test1]['memory']), 250)
+        print("UC1 SUCCESS: test_memory_size passed. Tested the memory size of the file instance.")
 
-    def test_load(self):
+
+    def test_load(self): # UC2
+        '''Test loading a file into memory'''
         # Test loading the first file
         self.uv.load(self.test1)
         self.assertIn(self.test1, self.uv.instances)
@@ -44,8 +51,10 @@ class TestUVSim(unittest.TestCase):
         expected_memory2 = [+1009, +1010, +2009, +3110, +4107, +1109, +4300, +1110, +4300, +0000, +0000, -99999]
         for index, value in enumerate(expected_memory2):
             self.assertEqual(self.uv.instances[self.test2]['memory'][index], value)
+        print("UC2 SUCCESS: test_memory_size passed with test1 and test2. Memory was correctly loaded into UVSim.")
 
-    def test_fetch(self):
+    def test_fetch(self): # UC3
+        '''Test fetching the first instruction from memory'''
         # Load test1 and test2
         self.uv.load(self.test1)
         self.uv.load(self.test2)
@@ -56,9 +65,9 @@ class TestUVSim(unittest.TestCase):
         expected_op_code_test1 = first_instruction_test1 // 100
         expected_operand_test1 = first_instruction_test1 % 100
         # Print the expected and actual values
-        print(f"For {self.test1_4digit}:")
-        print(f"Expected operation_code: {expected_op_code_test1}, Actual: {self.uv.instances[self.test1]['operation_code']}")
-        print(f"Expected operand: {expected_operand_test1}, Actual: {self.uv.instances[self.test1]['operand']}")
+        #print(f"For {self.test1_4digit}:")
+        #print(f"Expected operation_code: {expected_op_code_test1}, Actual: {self.uv.instances[self.test1]['operation_code']}")
+        #print(f"Expected operand: {expected_operand_test1}, Actual: {self.uv.instances[self.test1]['operand']}")
         # Assert the operation_code and operand
         self.assertEqual(self.uv.instances[self.test1]['operation_code'], expected_op_code_test1)
         self.assertEqual(self.uv.instances[self.test1]['operand'], expected_operand_test1)
@@ -69,14 +78,15 @@ class TestUVSim(unittest.TestCase):
         expected_op_code_test2 = first_instruction_test2 // 100
         expected_operand_test2 = first_instruction_test2 % 100
         # Print the expected and actual values
-        print(f"For {self.test2_4digit}:")
-        print(f"Expected operation_code: {expected_op_code_test2}, Actual: {self.uv.instances[self.test2]['operation_code']}")
-        print(f"Expected operand: {expected_operand_test2}, Actual: {self.uv.instances[self.test2]['operand']}")
+        #print(f"For {self.test2_4digit}:")
+        #print(f"Expected operation_code: {expected_op_code_test2}, Actual: {self.uv.instances[self.test2]['operation_code']}")
+        #print(f"Expected operand: {expected_operand_test2}, Actual: {self.uv.instances[self.test2]['operand']}")
         # Assert the operation_code and operand
         self.assertEqual(self.uv.instances[self.test2]['operation_code'], expected_op_code_test2)
         self.assertEqual(self.uv.instances[self.test2]['operand'], expected_operand_test2)
 
-    def test_set_user_input(self):
+    def test_set_user_input(self): # UC4
+        '''Test setting user input'''
         self.uv.load(self.test1)
         # Ensure the file instance exists
         self.assertIn(self.test1, self.uv.instances)
@@ -84,8 +94,11 @@ class TestUVSim(unittest.TestCase):
         self.uv.set_user_input(self.test1, test_input)
         # Verify the user input was correctly set
         self.assertEqual(self.uv.instances[self.test1]['user_input_from_gui'], test_input)
+        print("UC4 SUCCESS: test_set_user_input passed. User input was correctly set.")
+
 
     def test_close(self):
+        '''Test closing a file instance'''
         self.uv.load(self.test2)
         # Ensure the file instance exists
         self.assertIn(self.test2, self.uv.instances)
@@ -95,6 +108,7 @@ class TestUVSim(unittest.TestCase):
         self.assertNotIn(self.test2, self.uv.instances)
 
     def test_convert_file(self):
+        '''Test converting a 4-digit file to 6-digit file format'''
         # Convert test1 and test2
         converted_test1 = self.uv.convert_file(self.test1)
         converted_test2 = self.uv.convert_file(self.test2)
@@ -113,6 +127,7 @@ class TestUVSim(unittest.TestCase):
 
 
     def test_execute(self):
+        '''Test executing instructions'''
         # Output functions to store messages in a list
         self.messages = []
 
@@ -148,7 +163,7 @@ class TestUVSim(unittest.TestCase):
     
 
     def tearDown(self):
-        # Remove dummy data files after tests
+        '''Remove dummy data files after tests'''
         if os.path.exists(self.test1_4digit):
             os.remove(self.test1_4digit)
         if os.path.exists(self.test2_4digit):
